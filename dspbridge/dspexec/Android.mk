@@ -15,8 +15,8 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_CFLAGS += -Wall -g -O2 -finline-functions -DOMAP_3430
 
-# Required for Motorola Defy Codecs
-ifeq ($(TARGET_BOOTLOADER_BOARD_NAME),jordan)
+# Required for Motorola Codecs
+ifeq ($(TARGET_USE_OMX_RECOVERY),true)
 LOCAL_CFLAGS += -DMOTO_FORCE_RECOVERY
 endif
 

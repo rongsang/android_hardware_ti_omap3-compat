@@ -17,8 +17,7 @@
 //#define LOG_NDEBUG 0
 #define LOG_TAG "TIOverlay"
 
-#include <hardware/hardware.h>
-#include <hardware/overlay.h>
+#include "overlay.h"
 
 extern "C" {
 #include "v4l2_utils.h"
@@ -41,14 +40,14 @@ extern "C" {
 
 #define LOG_FUNCTION_NAME LOGV(" %s %s",  __FILE__, __FUNCTION__)
 
-#define NUM_OVERLAY_BUFFERS_REQUESTED  (8)
+#define NUM_OVERLAY_BUFFERS_REQUESTED  (2)
 #define SHARED_DATA_MARKER             (0x68759746) // OVRLYSHM on phone keypad
 
 /* These values should come from Surface Flinger */
 #define LCD_WIDTH 480
 #define LCD_HEIGHT 854
 
-#define CACHEABLE_BUFFERS 0x1
+#define CACHEABLE_BUFFERS 0x0
 
 #define ALL_BUFFERS_FLUSHED -66 //shared with Camera/Video Playback HAL
 
@@ -143,6 +142,8 @@ struct overlay_module_t HAL_MODULE_INFO_SYM = {
         name: "Sample Overlay module",
         author: "The Android Open Source Project",
         methods: &overlay_module_methods,
+        dso: NULL,
+        reserved: {0},
     }
 };
 
@@ -983,6 +984,7 @@ int overlay_queueBuffer(struct overlay_data_device_t *dev,
     if ( ctx->shared->streamingReset )
     {
         ctx->shared->streamingReset = 0;
+        ctx->qd_buf_count = 0;
         pthread_mutex_unlock(&ctx->shared->lock);
         return ALL_BUFFERS_FLUSHED;
     }
