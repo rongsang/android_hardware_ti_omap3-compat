@@ -143,6 +143,8 @@ struct overlay_module_t HAL_MODULE_INFO_SYM = {
         name: "Sample Overlay module",
         author: "The Android Open Source Project",
         methods: &overlay_module_methods,
+        dso: NULL,
+        reserved: {0},
     }
 };
 
@@ -682,7 +684,7 @@ static int overlay_commit(struct overlay_control_device_t *dev,
     LOGI("Position/X%d/Y%d/W%d/H%d\n", data->posX, data->posY, data->posW,
          data->posH);
     LOGI("Adjusted Position/X%d/Y%d/W%d/H%d\n", stage->posX, stage->posY,
-         stage->posW, data->posH);
+         stage->posW, stage->posH);
     LOGI("Rotation/%d\n", stage->rotation );
 
     if ((ret = disable_streaming_locked(shared, fd)))
@@ -983,6 +985,7 @@ int overlay_queueBuffer(struct overlay_data_device_t *dev,
     if ( ctx->shared->streamingReset )
     {
         ctx->shared->streamingReset = 0;
+        ctx->qd_buf_count = 0;
         pthread_mutex_unlock(&ctx->shared->lock);
         return ALL_BUFFERS_FLUSHED;
     }
